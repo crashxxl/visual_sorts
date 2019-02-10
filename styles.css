@@ -1,0 +1,61 @@
+body {
+  margin: 0;
+}
+
+.controls {
+  padding: 10px;
+}
+
+.control {
+  margin-bottom: 5px;
+}
+
+.container {
+  display: flex;
+}
+
+.canvas-wrapper {
+  flex: 1;
+  height: 100vh;
+  padding: 0;
+  overflow: hidden;
+}
+
+input[type="range"] {
+  margin: 0;
+  position: relative;
+  top: 5px;
+}
+
+select {
+  width: 200px;
+  height: 2em;
+}
+
+select[disabled=disabled] {
+  background: #eee;
+}
+
+label {
+  width: 50px;
+  display: inline-block;
+  text-align: right;
+}
+
+.actions {
+  padding-left: 50px;
+}
+
+button {
+  width: 80px;
+  margin-left: 2px;
+  margin-right: 2px;
+  border-radius: 5px;
+  border-style: none;
+  height: 30px;
+  cursor: pointer;
+}
+
+button[disabled=disabled], input[disabled=disabled], select[disabled=disabled] {
+  cursor: not-allowed;
+}

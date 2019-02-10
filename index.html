@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sorts !</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="p5.min.js"></script>
+  <script src="p5.sound.min.js"></script>
+  <script src="vue.js"></script>
+  <script src="array.js"></script>
+  <script src="sorts.js"></script>
+</head>
+<body>
+<div class="container" id="vue-instance">
+  <div class="controls">
+    <h1>Sorts !</h1>
+    <div class="control">
+      <label>Sort: </label>
+      <select v-model="sort" :disabled="started">
+        <option v-for="s in sorts" :value="s.sortFunction" class="option">{{s.name}}</option>
+      </select>
+    </div>
+    <div class="control">
+      <label>Size: </label>
+      <input type="range" min="20" max="1000" step="1" v-model="size" :disabled="started" />
+      <input type="number" min="20" max="1000" step="1" v-model.lazy="size" :disabled="started" />
+    </div>
+    <div class="control">
+      <label>Speed: </label>
+      <input type="range" min="1" max="1024" step="1" v-model="speed" />
+      <input type="number" min="1" max="1024" step="1" v-model.lazy="speed" />
+    </div>
+    <div class="actions">
+      <button @click="start" :disabled="started">Start</button><button @click="stop" :disabled="!started">Stop</button>
+    </div>
+    <div class="data">
+      {{accesses}} array access<br>
+      {{comparisons}} comparisons
+    </div>
+  </div>
+  <div class="canvas-wrapper" id="canvas-wrapper"></div>
+</div>
+<script type="text/javascript">
+const vm = new Vue({
+  el: '#vue-instance',
+  data: {
+    sort: undefined,
+    size: 100,
+    speed: 10,
+    started: false,
+    accesses: 0,
+    comparisons: 0,
+  },
+  mounted: function () {
+    this.sort = this.sorts[0].sortFunction;
+  },
+  methods: {
+    start: function () {
+      verified = -1;
+      this.started = true;
+      this.accesses = 0;
+      this.comparisons = 0;
+      init_array();
+      osc.start();
+      this.$nextTick(async function () {
+        await shuffle_array();
+        await delay(500);
+        this.accesses = 0;
+        this.comparisons = 0;
+        await this.sort();
+        await finish_array();
+        this.started = false;
+      });
+    },
+    stop: function () {
+      this.started = false;
+    }
+  },
+  computed: {
+    sorts: function () {
+      return [
+        {
+          name: 'Insertion sort',
+          sortFunction: insertion_sort
+        },
+        {
+          name: 'Merge sort',
+          sortFunction: merge_sort
+        },
+        {
+          name: 'Heap sort',
+          sortFunction: heap_sort
+        },
+        {
+          name: 'Count sort',
+          sortFunction: count_sort
+        },
+        {
+          name: 'Radix sort',
+          sortFunction: radix_sort
+        }
+      ];
+    }
+  },
+  watch: {
+    size: function(val) {
+      if(val < 20) {
+        this.size = 20;
+      }
+      if(val > 1000) {
+        this.size = 1000;
+      }
+    },
+    speed: function(val) {
+      if(val < 1) {
+        this.speed = 1;
+      }
+      if(val > 1024) {
+        this.speed = 1024;
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
