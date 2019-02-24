@@ -29,6 +29,12 @@
       <input type="range" min="1" max="1024" step="1" v-model="speed" />
       <input type="number" min="1" max="1024" step="1" v-model.lazy="speed" />
     </div>
+    <div class="control">
+      <label>Draw type: </label>
+      <select v-model="drawingFunction">
+        <option v-for="s in drawingFunctions" :value="s.drawingFunction" class="option">{{s.name}}</option>
+      </select>
+    </div>
     <div class="actions">
       <button @click="start" :disabled="started">Start</button><button @click="stop" :disabled="!started">Stop</button>
     </div>
@@ -49,9 +55,11 @@ const vm = new Vue({
     started: false,
     accesses: 0,
     comparisons: 0,
+    drawingFunction: undefined
   },
   mounted: function () {
     this.sort = this.sorts[0].sortFunction;
+    this.drawingFunction = this.drawingFunctions[0].drawingFunction;
   },
   methods: {
     start: function () {
@@ -97,6 +105,18 @@ const vm = new Vue({
         {
           name: 'Radix sort',
           sortFunction: radix_sort
+        }
+      ];
+    },
+    drawingFunctions: function () {
+      return [
+        {
+          name: 'Bars',
+          drawingFunction: draw_array
+        },
+        {
+          name: 'Rainbow circle',
+          drawingFunction: draw_array_circle
         }
       ];
     }

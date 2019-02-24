@@ -66,11 +66,39 @@ async function finish_array() {
   }
 }
 
+
+function draw_array_circle(p) {
+  let radius = p.min(p.width, p.height) / 2;
+  let cx = p.width/2;
+  let cy = p.height/2;
+
+  for(let i = 0; i < array.length; i++) {
+    let a = p.map(i, 1, array.length, 0, p.TWO_PI) - p.HALF_PI;
+    let r = radius - p.map(p.abs(array[i] - i), 0, array.length, 0, radius);
+    p.strokeWeight(1);
+    if(i == select1) {
+      p.stroke(0, 0, 100);
+      p.fill(0, 0, 255);
+    } else if(i == select2) {
+      p.stroke(100, 0, 0);
+      p.fill(255, 0, 0);
+    } else if(i <= verified) {
+      p.stroke(0, 100, 0);
+      p.fill(0, 255, 0);
+    } else {
+      p.stroke(0);
+      p.colorMode(p.HSB, array.length, array.length, array.length);
+      p.fill(array[i], array.length, array.length);
+      p.colorMode(p.RGB);
+    }
+    p.arc(cx, cy, r*2, r*2, a - p.radians(360/array.length)/2, a + p.radians(360/array.length)/2)
+    //p.line(cx, cy, cx + p.cos(a) * r, cy + p.sin(a) * r);
+  }
+
+}
+
 function draw_array (p) {
-  vm.accesses += accesses;
-  accesses = 0;
-  vm.comparisons += comparisons;
-  comparisons = 0;
+
   for(let i = 0; i < array.length; i++) {
     if(i == select1) {
       p.stroke(0, 0, 100);
@@ -87,15 +115,6 @@ function draw_array (p) {
     }
     p.rect(p.width/array.length * i, p.height, p.width/array.length, -p.height/array.length * array[i]);
   }
-  if(select1 != null) {
-    osc.amp(0.1, 0.01);
-    osc.freq(array[select1] / array.length * 1000)
-  } else {
-    osc.freq(0);
-    osc.amp(0, 0.01);
-  }
-
-  select1 = select2 = null;
 }
 let sketch = function (p) {
   p.setup = function() {
@@ -107,8 +126,21 @@ let sketch = function (p) {
     p.windowResized();
   }
   p.draw = function () {
+    vm.accesses += accesses;
+    accesses = 0;
+    vm.comparisons += comparisons;
+    comparisons = 0;
     p.background(255, 255, 255);
-    draw_array(p);
+    vm.drawingFunction(p);
+    if(select1 != null) {
+      osc.amp(0.1, 0.01);
+      osc.freq(array[select1] / array.length * 1000)
+    } else {
+      osc.freq(0);
+      osc.amp(0, 0.01);
+    }
+
+    select1 = select2 = null;
   }
   p.mousePressed = function () {
 
